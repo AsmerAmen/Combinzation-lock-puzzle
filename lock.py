@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     print('Trying', ' '.join(clues))
 
-    possible_solutions = []
+    possible_solutions = [str(number) for number in range(1000)]
 
     clue_patterns = []
     # reg_list = ['[0 - 9]' for i in range(3)]
@@ -36,6 +36,9 @@ if __name__ == '__main__':
         right = int(clue[4])
         wrong = int(clue[6])
         digits = clue[:3]
+        clue_specific_patterns = []
+        if right == 0:
+            pass
         if right == 1:
             if wrong == 0:
                 pass
@@ -45,56 +48,42 @@ if __name__ == '__main__':
                     reg_line[ind] = digits[ind]
                     for j in range(len(digits)):
                         if j != ind:
-                            clue_patterns.append(['^{}{}{}$'.format(*reg_line), [digits[j]], digits])
+                            clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line), [digits[j]], digits])
             if wrong == 2:
                 for ind in range(len(digits)):
                     reg_line = ['[0-9]' for i in range(3)]
                     reg_line[ind] = digits[ind]
                     # print(reg_line)
-                    clue_patterns.append(['^{}{}{}$'.format(*reg_line), [digits[j] for j in range(len(digits)) if j != ind], digits])
+                    clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line),
+                                                   [digits[j] for j in range(len(digits)) if j != ind], digits])
+        if right == 2:
+            pass
+        clue_patterns.append(clue_specific_patterns)
 
-    print(len(clue_patterns))
+    # print(len(clue_patterns))
     # for pat in clue_patterns:
     #     print(pat)
 
-    to_delete_list = []
-    for index in range(len(clue_patterns)):
-        for index_2 in range(len(clue_patterns)):
-            if clue_patterns[index][0] == clue_patterns[index_2][0]:
-                if len(clue_patterns[index][1]) > len(clue_patterns[index_2][1]):
-                    to_delete_list.append(clue_patterns[index_2])
+    for clue_pattern in clue_patterns:
+        possible_solutions_temp = []
+        for trial_str in possible_solutions:
+            for patt in clue_pattern:
+                is_match = True
+                if not re.compile(patt[0]).match(trial_str):
+                    is_match = False
+                else:
+                    for digit in patt[1]:
+                        # Check if correct value, wrong place exits.
+                        if digit not in trial_str:
+                            is_match = False
+                        if trial_str.find(digit) == patt[2].find(digit):
+                            is_match = False
+                # print(is_match, clue_pattern)
 
-    print(len(to_delete_list))
-    for pat in to_delete_list:
-        # print(pat)
-        del clue_patterns[clue_patterns.index(pat)]
-
-    print(len(clue_patterns))
-    for pat in clue_patterns:
-        print(pat)
-
-    for trial in range(1000):
-        trial_str = str(trial)
-        is_match = True
-
-        for clue_pattern in clue_patterns:
-            is_match = True
-            if not re.compile(clue_pattern[0]).match(trial_str):
-                is_match = False
-            else:
-                for digit in clue_pattern[1]:
-                    # Check if correct value, wrong place exits.
-                    if digit not in trial_str:
-                        is_match = False
-                    if trial_str.find(digit) == clue_pattern[2].find(digit):
-                        is_match = False
-            # print(is_match, clue_pattern)
-
-            if is_match:
-                possible_solutions.append(trial)
-
+                if is_match:
+                    possible_solutions_temp.append(trial_str)
+        possible_solutions = possible_solutions_temp
     print(possible_solutions)
-
 
 
 
