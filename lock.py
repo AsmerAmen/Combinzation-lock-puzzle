@@ -83,8 +83,8 @@ if __name__ == '__main__':
         clue_patterns.append(clue_specific_patterns)
 
     # print(len(clue_patterns))
-    for pat in clue_patterns:
-        print(pat)
+    # for pat in clue_patterns:
+    #     print(pat)
 
     for clue_pattern in clue_patterns:
         possible_solutions_temp = []
@@ -108,13 +108,18 @@ if __name__ == '__main__':
                             if trial_str.find(digit) == patt[3].find(digit):
                                 is_match = False
 
-
-
+                    if len(patt[2])==3 and len(patt[1])==2:
+                        count = 0
+                        for digit in patt[2]:
+                            if digit in trial_str:
+                                count += 1
+                        if count == 3:
+                            is_match = False
 
                 if is_match:
                     possible_solutions_temp.append(trial_str)
         possible_solutions = sorted(list(set(possible_solutions_temp)))
-        print('\n', possible_solutions)
+        # print('\n', possible_solutions)
 
     if len(possible_solutions) == 0:
         print('No solutions found.')
