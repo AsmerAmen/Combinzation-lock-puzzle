@@ -38,31 +38,50 @@ if __name__ == '__main__':
         digits = clue[:3]
         clue_specific_patterns = []
         if right == 0:
-            pass
+            if wrong == 0:
+                reg_line = ['[0-9]' for i in range(3)]
+                clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line), [],
+                                               [digit for digit in digits], digits])
+            if wrong == 1:
+                for ind in range(len(digits)):
+                    reg_line = ['[0-9]' for i in range(3)]
+                    # reg_line[ind] = digits[ind]
+                    for j in range(len(digits)):
+                        if j != ind:
+                            clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line), [],
+                                                           [digit for digit in digits], digits])
+            if wrong == 2:
+                for ind in range(len(digits)):
+                    reg_line = ['[0-9]' for i in range(3)]
+                    # reg_line[ind] = digits[ind]
+                    clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line), [],
+                                                   [digit for digit in digits], digits])
         if right == 1:
             if wrong == 0:
-                pass
+                for ind in range(len(digits)):
+                    reg_line = ['[0-9]' for i in range(3)]
+                    reg_line[ind] = digits[ind]
+                    clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line), [], [], digits])
             if wrong == 1:
                 for ind in range(len(digits)):
                     reg_line = ['[0-9]' for i in range(3)]
                     reg_line[ind] = digits[ind]
                     for j in range(len(digits)):
                         if j != ind:
-                            clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line), [digits[j]], digits])
+                            clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line), [digits[j]], [], digits])
             if wrong == 2:
                 for ind in range(len(digits)):
                     reg_line = ['[0-9]' for i in range(3)]
                     reg_line[ind] = digits[ind]
-                    # print(reg_line)
                     clue_specific_patterns.append(['^{}{}{}$'.format(*reg_line),
-                                                   [digits[j] for j in range(len(digits)) if j != ind], digits])
+                                                   [digits[j] for j in range(len(digits)) if j != ind], [], digits])
         if right == 2:
             pass
         clue_patterns.append(clue_specific_patterns)
 
-    # print(len(clue_patterns))
-    # for pat in clue_patterns:
-    #     print(pat)
+    print(len(clue_patterns))
+    for pat in clue_patterns:
+        print(pat)
 
     for clue_pattern in clue_patterns:
         possible_solutions_temp = []
@@ -76,13 +95,16 @@ if __name__ == '__main__':
                         # Check if correct value, wrong place exits.
                         if digit not in trial_str:
                             is_match = False
-                        if trial_str.find(digit) == patt[2].find(digit):
+                        if trial_str.find(digit) == patt[3].find(digit):
+                            is_match = False
+                    for digit in patt[2]:
+                        if digit in trial_str:
                             is_match = False
                 # print(is_match, clue_pattern)
 
                 if is_match:
                     possible_solutions_temp.append(trial_str)
-        possible_solutions = possible_solutions_temp
+        possible_solutions = sorted(list(set(possible_solutions_temp)))
     print(possible_solutions)
 
 
